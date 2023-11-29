@@ -1,0 +1,165 @@
+{% extends 'base.html'%}
+{%load static%}
+
+{% block title %}
+Bosh Sahifa
+{% endblock title %}
+
+{% block content %}
+
+<style>
+  body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9fa;
+  }
+  .card{
+    background-color: #ccc;
+    box-shadow: #f8f9fa;
+  }
+  .container {
+      margin-top: 80px;
+  }
+
+  .tweet-form {
+      margin-bottom: 20px;
+  }
+
+  .tweet-card {
+            max-width: 400px;
+            margin: 0 auto;
+            margin-bottom: 20px;
+        }
+
+.user-profile {
+    display: flex;
+    align-items: center;
+}
+
+.profile-image {
+    border-radius: 50%;
+    width: 40px; /* Adjust the size as needed */
+    height: 40px;
+    margin-right: 10px; /* Add margin for spacing */
+}
+</style>
+</head>
+<body>
+
+
+
+<!-- Main Content -->
+<div class="container">
+<!-- Tweet Form -->
+{%if request.user.is_authenticated%}
+<form method="post" action="" class="tweet-form" id="tweetForm">
+  {% csrf_token %}
+  <div class="form-group">
+      <textarea class="form-control" name="content" rows="3" placeholder="Nimalar bo'ldi?" id="tweetContent"></textarea>
+  </div>
+  <button type="submit" class="btn btn-primary">Joylash</button>
+</form>
+{%endif%}
+<!-- Tweet Feed -->
+{% for tweet in context.tweets %}
+  <div class="card tweet-card">
+      <div class="card-body">
+          <div class="card-title">
+            <div class="text-muted">
+
+                {%if tweet.user.userprofile.profile_picture.url is not none%}
+                <img src="{{ tweet.user.userprofile.profile_picture.url }}" alt="Profile Picture" class="profile-image rounded-circle mr-2" style="width: 40px; height: 40px;">
+                {%else%}
+                <img src="{{'/media/profile_pics/default.png'}}" alt="Profile Picture" class="profile-image rounded-circle mr-2" style="width: 40px; height: 40px;">
+                {%endif%}
+                <a href="{% url "profile_view" tweet.user.username %}">{{tweet.user.first_name}} | @{{ tweet.user.username }}</a>
+            {% if tweet.user.userprofile.verify %}
+                      <i class="fa-solid fa-circle-check"></i>
+            {% endif %}
+          </div></div>
+          <h5 class="card-text">{{ tweet.content }}</h5>
+          <div class="tweet-actions">
+            <span class="tweet-action like-action" onclick=likeTweet(1)>
+                <i class="fa-regular fa-heart"></i>
+                <span class="like-count">{{ tweet.likes.count }}</span>
+            </span>
+            <span class="tweet-action comment-action" onclick=commentTweet(1)>
+                <i class="fa-regular fa-comment"></i>
+                <span class="comment-count">{{ tweet.comments.count }}</span>
+            </span>
+        </div>
+          <p class="card-text"><small class="text-muted">{% if tweet.created_at.date == context.today.date %}
+            {{ tweet.created_at|date:"H:i" }}
+        {% else %}
+            {{ tweet.created_at|date:"F d, Y H:i" }}
+        {% endif %}
+
+    </small></p>
+    {%if request.user == tweet.user%}<a href="{% url 'deletepost' pk=tweet.id %}">Delete</a>{%endif%}  
+    </div>
+  </div>
+{% endfor %}
+</div>
+
+
+  
+  
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.0/js/bootstrap.min.js"></script>
+  
+
+  <script>
+    document.getElementById('tweetContent').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            document.getElementById('tweetForm').submit();
+        }
+    });
+
+    function likeTweet(tweetId) {
+        // Add your logic to handle liking a tweet (e.g., make an AJAX request)
+        // Update the like count in the UI
+        const likeCountElement = document.querySelector(`#tweet-${tweetId} .like-count`);
+        likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1;
+    }
+
+    function commentTweet(tweetId) {
+        // Add your logic to handle commenting on a tweet (e.g., open a modal or redirect to a comment page)
+        // Update the comment count in the UI
+        const commentCountElement = document.querySelector(`#tweet-${tweetId} .comment-count`);
+        commentCountElement.textContent = parseInt(commentCountElement.textContent) + 1;
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+    // Check the dark mode preference from cookies
+    const darkMode = localStorage.getItem('darkMode') === 'enabled';
+    document.getElementById('darkModeSwitch').checked = darkMode;
+    toggleDarkMode(darkMode);
+
+    // Add event listener for dark mode switch
+    document.getElementById('darkModeSwitch').addEventListener('change', function () {
+        const darkModeEnabled = this.checked;
+        localStorage.setItem('darkMode', darkModeEnabled ? 'enabled' : 'disabled');
+        toggleDarkMode(darkModeEnabled);
+    });
+
+    // Add event listener for form submission
+    document.getElementById('myForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the default form submission
+        const formData = new FormData(this);
+
+        // You can now send the formData using AJAX
+        // For simplicity, we'll just log the data here
+        for (const [name, value] of formData) {
+            console.log(`${name}: ${value}`);
+        }
+    });
+});
+function toggleDarkMode(enabled) {
+    document.body.classList.toggle('dark-mode', enabled);
+}
+</script>
+
+{% endblock content %}

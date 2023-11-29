@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}
+Profile
+{% endblock title %}
+
+{% block content %}
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .profile-header {
+        background-color: #007bff;
+        color: #fff;
+        padding: 50px 0;
+        text-align: center;
+    }
+
+    .profile-picture {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid #fff;
+        margin-bottom: 20px;
+    }
+
+    .profile-details {
+        padding: 20px;
+    }
+
+    .profile-details h2 {
+        color: #007bff;
+    }
+
+    .profile-actions {
+        margin-top: 20px;
+    }
+
+    .profile-actions button {
+        margin-right: 10px;
+    }
+</style>
+
+
+
+
+{{profile.bio}}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="profile-header">
+                    <img src="{%if profile.profile_picture%}{{profile.profile_picture.url}}{%else%}{{'/media/profile_pics/default.png'}}{%endif%}" alt="Profile Picture" class="profile-picture">
+                    <div class="text">@{{profile.user.username}}</div>
+                    <h3>{{profile.user.get_full_name}}</h1>
+                </div>
+                <div class="profile-details">
+                    <h2>Bio</h2>
+                    <p>{{profile.bio}}</p>
+                </div>
+                <div class="profile-actions">
+                    {% if request.user == profile.user %}
+                    <button class="btn btn-primary"><i class="fas fa-edit"></i> Edit Profile</button>
+                    {% endif%}
+                    <button class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

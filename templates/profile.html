@@ -1,0 +1,82 @@
+{%extends 'base.html'%}
+
+{% block title %}
+Profile
+{% endblock title %}
+
+{% block content %}
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .profile-header {
+        background-color: #007bff;
+        color: #fff;
+        padding: 50px 0;
+        text-align: center;
+    }
+
+    .profile-picture {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid #fff;
+        margin-bottom: 20px;
+    }
+
+    .profile-details {
+        padding: 20px;
+    }
+
+    .profile-details h2 {
+        color: #007bff;
+    }
+
+    .profile-actions {
+        margin-top: 20px;
+    }
+
+    .profile-actions button {
+        margin-right: 10px;
+    }
+</style>
+
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="profile-header">
+                    <img src="{%if profile.profile_picture%}{{profile.profile_picture.url}}{%else%}{{'/media/profile_pics/default.png'}}{%endif%}" alt="Profile Picture" class="profile-picture">
+                    <div class="text">@{{profile.user.username}}</div>
+                    <h3>{{profile.user.get_full_name}}</h1>
+                </div>
+                <div class="profile-details">
+                    <h2>Bio</h2>
+                    <p>{{profile.bio}}</p>
+                </div>
+                <div class="profile-actions">
+                    {% if request.user == profile.user %}
+                    <button class="btn btn-primary"><i class="fas fa-edit"></i> Edit Profile</button>
+                    {% endif%}
+                    <button class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+    integrity="sha384-7pF2QhCz1l47eDHKe8XDYPsBXWtD4z6eKA2aK3b6VjoHM9I5WEHI1kI9FLbXboGk"
+    crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.0/js/bootstrap.min.js"
+    integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+Wy6pMz9L9FqjQxI2hAOMhDAnG6Yd5BOnMD"
+    crossorigin="anonymous"></script>
+{% endblock %}
